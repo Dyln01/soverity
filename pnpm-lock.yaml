@@ -142,6 +142,21 @@ importers:
 
   packages/contracts: {}
 
+  packages/identity:
+    devDependencies:
+      '@soverity/config':
+        specifier: workspace:*
+        version: link:../config
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@1.21.7)(postcss@8.5.29)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.5)
+
   packages/sdk:
     devDependencies:
       '@soverity/config':
@@ -153,6 +168,21 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@1.21.7)(postcss@8.5.29)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.5)
+
+  packages/storage:
+    devDependencies:
+      '@soverity/config':
+        specifier: workspace:*
+        version: link:../config
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(jiti@1.21.7)(postcss@8.5.29)(typescript@5.9.3)

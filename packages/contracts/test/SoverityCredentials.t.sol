@@ -86,9 +86,10 @@ contract SoverityCredentialsTest is Test {
     }
 
     function test_Issue_RevertWhen_ExpiredTimestamp() public {
+        vm.warp(1_700_000_000); // a real timestamp so `expiresAt` is non-zero
         vm.prank(attester);
         vm.expectRevert(SoverityCredentials.InvalidExpiry.selector);
-        credentials.issue(schemaUid, subject, 0, uint64(block.timestamp - 1));
+        credentials.issue(schemaUid, subject, bytes32(uint256(1)), uint64(block.timestamp - 1));
     }
 
     function test_Issue_RevertWhen_Duplicate() public {

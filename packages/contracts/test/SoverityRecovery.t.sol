@@ -118,9 +118,12 @@ contract SoverityRecoveryTest is Test {
     }
 
     function test_Execute_RevertWhen_ThresholdNotMet() public {
-        vm.startPrank(guardians[0]);
+        vm.prank(guardians[0]);
         recovery.proposeRecovery(DID, candidate);
-        recovery.approveRecovery(DID); // proposing guardian auto-approved, second is a no-op revert
+        // 1 of 3 approvals — must not execute even after the timelock.
+        vm.warp(block.timestamp + TIMELOCK + 1);
+        vm.expectRevert(SoverityRecovery.ThresholdNotMet.selector);
+        recovery.executeRecovery(DID);
     }
 
     function test_Approve_RevertWhen_AlreadyApproved() public {
@@ -202,7 +205,7 @@ contract SoverityRecoveryTest is Test {
 
     function test_AddGuardian_RevertWhen_NotOwner() public {
         vm.prank(attacker);
-        vm.expectRevert(bytes("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("OwnableUnauthorizedAccount(address)")), attacker));
         recovery.addGuardian(makeAddr("x"));
     }
 
@@ -226,7 +229,6 @@ contract SoverityRecoveryTest is Test {
     ///      timelock elapsed, and never before.
     function testFuzz_RecoveryThreshold(uint8 guardianCountSeed, uint8 approveCount) public {
         uint256 n = 2 + (guardianCountSeed % 6); // 2..7 guardians
-        vm.assume(n <= 7);
 
         address[] memory gs = new address[](n);
         for (uint256 i = 0; i < n; ++i) {
@@ -234,30 +236,33 @@ contract SoverityRecoveryTest is Test {
         }
 
         uint256 t = 1 + (uint256(approveCount) % n); // 1..n
-        SoverityRecovery rec = new SoverityRecovery(registry, gs, t, 1 hours);
+        SoverityRegistry freshRegistry = new SoverityRegistry();
+        SoverityRecovery rec = new SoverityRecovery(freshRegistry, gs, t, 1 hours);
 
+        string memory did = "did:pkh:fuzz-recovery";
         vm.prank(gs[0]);
-        rec.proposeRecovery("did:pkh:fuzz", candidate);
+        rec.proposeRecovery(did, candidate);
 
-        // Approve with exactly `t-1` more guardians: threshold NOT yet met.
-        uint256 extra = approveCount % (n - 1); // 0..n-2 additional approvals beyond proposer
+        // Approve with a random subset of the remaining guardians.
+        uint256 extra = uint256(approveCount) % (n - 1); // 0..n-2 additional approvals beyond proposer
         for (uint256 i = 1; i <= extra && i < n; ++i) {
             vm.prank(gs[i]);
-            rec.approveRecovery("did:pkh:fuzz");
+            rec.approveRecovery(did);
         }
 
-        uint256 approvals = rec.getProposal("did:pkh:fuzz").approvalCount;
+        uint256 approvals = rec.getProposal(did).approvalCount;
         if (approvals < t) {
+            // Below threshold: never executable, even after the timelock.
             vm.warp(block.timestamp + 2 hours);
             vm.expectRevert(SoverityRecovery.ThresholdNotMet.selector);
-            rec.executeRecovery("did:pkh:fuzz");
+            rec.executeRecovery(did);
         } else {
-            // Threshold met: timelock must still gate execution.
+            // Threshold met but timelock still gates execution.
             vm.expectRevert(SoverityRecovery.TimelockNotElapsed.selector);
-            rec.executeRecovery("did:pkh:fuzz");
+            rec.executeRecovery(did);
 
             vm.warp(block.timestamp + 1 hours + 1);
-            rec.executeRecovery("did:pkh:fuzz");
+            rec.executeRecovery(did);
         }
     }
 }

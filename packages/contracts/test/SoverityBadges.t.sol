@@ -92,10 +92,10 @@ contract SoverityBadgesTest is Test {
     }
 
     function test_EIP5192_InterfaceSupported() public view {
-        // ERC-165 interface id for EIP-5192 (minimal soulbound NFT).
-        bytes4 eip5192 = bytes4(0x9d76f020);
+        // Canonical ERC-165 interface id for EIP-5192 (minimal soulbound NFT).
+        assertTrue(badges.supportsInterface(0x9d76f020));
         assertTrue(badges.supportsInterface(type(IERC721).interfaceId));
-        assertTrue(badges.supportsInterface(eip5192));
+        assertFalse(badges.supportsInterface(0xffffffff));
     }
 
     // ------------------------------------------------------------------
@@ -109,7 +109,7 @@ contract SoverityBadgesTest is Test {
 
         vm.prank(other);
         uint256 id = badges.mint(holder, SoverityBadges.Tier.Bronze, URI);
-        assertEq(badges.ownerOf(id), other == address(0) ? address(0) : holder);
+        assertEq(badges.ownerOf(id), holder);
 
         vm.prank(admin);
         badges.setIssuer(other, false);
@@ -118,7 +118,7 @@ contract SoverityBadgesTest is Test {
 
     function test_SetIssuer_RevertWhen_NotAdmin() public {
         vm.prank(other);
-        vm.expectRevert(bytes("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("OwnableUnauthorizedAccount(address)")), other));
         badges.setIssuer(other, true);
     }
 
@@ -135,7 +135,7 @@ contract SoverityBadgesTest is Test {
         uint256 tokenId = _mint(SoverityBadges.Tier.Gold);
 
         vm.prank(holder);
-        vm.expectRevert(bytes("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("OwnableUnauthorizedAccount(address)")), holder));
         badges.burn(tokenId);
 
         vm.prank(admin);

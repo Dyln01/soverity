@@ -41,10 +41,11 @@ contract SoverityRegistryTest is Test {
     }
 
     function test_CreatePass_EmitsEvent() public {
+        address acct2 = makeAddr("bobAccount2");
         vm.expectEmit(true, true, true, true);
-        emit SoverityRegistry.PassCreated(BOB_DID, bobAccount, "bob", bob);
+        emit SoverityRegistry.PassCreated("did:pkh:eip155:8453:0xBOB2", acct2, "bob2", bob);
         vm.prank(bob);
-        registry.createPass("did:pkh:eip155:8453:0xBOB2", makeAddr("bobAccount2"), "bob2");
+        registry.createPass("did:pkh:eip155:8453:0xBOB2", acct2, "bob2");
     }
 
     function test_CreatePass_RevertWhen_DidAlreadyRegistered() public {
@@ -180,7 +181,7 @@ contract SoverityRegistryTest is Test {
 
     function test_SetPassOwner_RevertWhen_NotOwner() public {
         vm.prank(alice);
-        vm.expectRevert(bytes("Ownable: caller is not the owner"));
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("OwnableUnauthorizedAccount(address)")), alice));
         registry.setPassOwner(ALICE_DID, bob);
     }
 
@@ -211,16 +212,17 @@ contract SoverityRegistryTest is Test {
     /// and a second create with the other casing must hit UsernameTaken.
     function testFuzz_UsernameNormalizationCaseFolding(string memory username) public {
         vm.assume(bytes(username).length >= 3 && bytes(username).length <= 32);
-        // Restrict charset to letters only to keep the fold predictable.
+        // Restrict charset to ASCII letters only to keep the fold predictable.
         bytes memory raw = bytes(username);
         for (uint256 i = 0; i < raw.length; ++i) {
             bool letter = (raw[i] >= 0x41 && raw[i] <= 0x5A) || (raw[i] >= 0x61 && raw[i] <= 0x7A);
             vm.assume(letter);
         }
 
+        SoverityRegistry fresh = new SoverityRegistry();
         address acct = makeAddr("fuzzAccount");
         vm.prank(alice);
-        registry.createPass("did:pkh:fuzz", acct, username);
+        fresh.createPass("did:pkh:fuzz", acct, username);
 
         // Flipped-case lookup resolves to the same DID.
         bytes memory flipped = new bytes(raw.length);
@@ -234,11 +236,11 @@ contract SoverityRegistryTest is Test {
                 flipped[i] = b;
             }
         }
-        assertEq(registry.resolveByUsername(string(flipped)).did, "did:pkh:fuzz");
+        assertEq(fresh.resolveByUsername(string(flipped)).did, "did:pkh:fuzz");
 
         // Same name in any casing is taken.
         vm.prank(bob);
         vm.expectRevert(SoverityRegistry.UsernameTaken.selector);
-        registry.createPass("did:pkh:fuzz2", makeAddr("fuzzAccount2"), string(flipped));
+        fresh.createPass("did:pkh:fuzz2", makeAddr("fuzzAccount2"), string(flipped));
     }
 }

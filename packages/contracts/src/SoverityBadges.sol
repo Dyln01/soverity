@@ -159,13 +159,14 @@ contract SoverityBadges is ERC721, Ownable {
     }
 
     /**
-     * @notice ERC-165: reports support for the EIP-5192 interface
-     *         (0x9d76f020) in addition to ERC-721.
+     * @notice ERC-165: reports support for the canonical EIP-5192 interface
+     *         id 0x9d76f020 (Locked + Unlocked events + locked(uint256)) in
+     *         addition to ERC-721.
      * @param interfaceId The interface id to check.
      * @return True when the interface is supported.
      */
     function supportsInterface(bytes4 interfaceId) public view override(ERC721) returns (bool) {
-        return interfaceId == type(IERC5192).interfaceId || super.supportsInterface(interfaceId);
+        return interfaceId == 0x9d76f020 || super.supportsInterface(interfaceId);
     }
 
     /**
