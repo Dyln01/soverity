@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Script} from "forge-std/Script.sol";
+import {console2} from "forge-std/console2.sol";
 import {SoverityRegistry} from "../src/SoverityRegistry.sol";
 import {SoverityCredentials} from "../src/SoverityCredentials.sol";
 import {SoverityBadges} from "../src/SoverityBadges.sol";
@@ -25,10 +26,10 @@ import {SoverityPermissions} from "../src/SoverityPermissions.sol";
  *   forge script script/Deploy.s.sol --rpc-url $BASE_RPC_URL --broadcast --verify
  */
 contract Deploy is Script {
-    // Social-recovery configuration (3-of-5 guardians, 48h timelock).
-    // Override via env vars when deploying to a shared network.
-    address constant EXPECTED_GUARDIAN_0 = address(0);
-    uint256 constant RECOVERY_THRESHOLD = 3;
+    // Social-recovery defaults: the deployer is seeded as the sole initial
+    // guardian with threshold 1 so the deployment is immediately usable.
+    // Rotate the guardian set (addGuardian/removeGuardian) to reach the
+    // intended M-of-N (e.g. 3-of-5 with a 48h timelock) before production.
     uint256 constant RECOVERY_TIMELOCK = 48 hours;
 
     function run() external returns (SoverityRegistry registry) {
@@ -46,9 +47,9 @@ contract Deploy is Script {
 
         // 4. Guardian-based social recovery, wired to the registry so
         //    executed recoveries reassign pass ownership on-chain.
-        //    NOTE: guardian set starts empty here is not allowed, so the
-        //    deployer is seeded as the sole initial guardian; rotate via
-        //    addGuardian/removeGuardian once real guardians are chosen.
+        //    The deployer is seeded as the sole initial guardian (threshold
+        //    1); rotate via addGuardian/removeGuardian once real guardians
+        //    are chosen.
         address[] memory guardians = new address[](1);
         guardians[0] = msg.sender;
         new SoverityRecovery(registry, guardians, 1, RECOVERY_TIMELOCK);
@@ -58,6 +59,6 @@ contract Deploy is Script {
 
         vm.stopBroadcast();
 
-        console.log("SoverityRegistry:   ", address(registry));
+        console2.log("SoverityRegistry:   ", address(registry));
     }
 }

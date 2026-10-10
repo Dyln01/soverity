@@ -81,7 +81,11 @@ contract SoverityPermissions {
      * @param dapp The approved dApp.
      * @param salt Random salt chosen by the user.
      */
-    function _computeCommitment(address user, address dapp, uint256 scopes, bytes32 salt) private pure returns (bytes32) {
+    function _computeCommitment(address user, address dapp, uint256 scopes, bytes32 salt)
+        private
+        pure
+        returns (bytes32)
+    {
         return keccak256(abi.encode(scopes, user, dapp, salt));
     }
 
@@ -110,7 +114,8 @@ contract SoverityPermissions {
         if (dapp == address(0)) revert ZeroDApp();
         if (scopes == 0) revert EmptyScopes();
 
-        _permissions[msg.sender][dapp] = Permission({scopes: scopes, scopeCommitment: 0, grantedAt: uint64(block.timestamp)});
+        _permissions[msg.sender][dapp] =
+            Permission({scopes: scopes, scopeCommitment: 0, grantedAt: uint64(block.timestamp)});
         _trackDapp(msg.sender, dapp);
 
         emit PermissionGranted(msg.sender, dapp, scopes, 0);
@@ -134,7 +139,8 @@ contract SoverityPermissions {
         if (scopes == 0) revert EmptyScopes();
 
         bytes32 commitment = _computeCommitment(msg.sender, dapp, scopes, salt);
-        _permissions[msg.sender][dapp] = Permission({scopes: 0, scopeCommitment: commitment, grantedAt: uint64(block.timestamp)});
+        _permissions[msg.sender][dapp] =
+            Permission({scopes: 0, scopeCommitment: commitment, grantedAt: uint64(block.timestamp)});
         _trackDapp(msg.sender, dapp);
 
         emit PermissionGranted(msg.sender, dapp, 0, commitment);

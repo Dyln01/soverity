@@ -114,11 +114,6 @@ contract SoverityCredentialsTest is Test {
         assertFalse(credentials.verify(uid));
     }
 
-    function test_Verify_FalseWhenUnknown() public pure {
-        // verify on a never-issued UID must not revert.
-        // (kept as a call on a fresh contract below in the non-pure twin)
-    }
-
     function test_Verify_FalseWhenUnknownUid() public {
         assertFalse(credentials.verify(bytes32("unknown")));
     }

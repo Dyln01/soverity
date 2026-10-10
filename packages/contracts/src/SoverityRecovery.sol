@@ -115,12 +115,9 @@ contract SoverityRecovery is Ownable {
     /// @param threshold_ Required guardian approvals (1 <= threshold_ <= guardians.length).
     /// @param timelockDelay_ Seconds between threshold being met and
     ///        execution (e.g. 48 hours = 172800).
-    constructor(
-        SoverityRegistry registry_,
-        address[] memory guardians_,
-        uint256 threshold_,
-        uint256 timelockDelay_
-    ) Ownable(msg.sender) {
+    constructor(SoverityRegistry registry_, address[] memory guardians_, uint256 threshold_, uint256 timelockDelay_)
+        Ownable(msg.sender)
+    {
         if (guardians_.length == 0 || guardians_.length > MAX_GUARDIANS) revert GuardianLimitExceeded();
         if (threshold_ == 0 || threshold_ > guardians_.length) revert InvalidThreshold();
         if (timelockDelay_ == 0) revert InvalidThreshold();

@@ -238,8 +238,16 @@ contract SoverityRecoveryTest is Test {
         uint256 t = 1 + (uint256(approveCount) % n); // 1..n
         SoverityRegistry freshRegistry = new SoverityRegistry();
         SoverityRecovery rec = new SoverityRecovery(freshRegistry, gs, t, 1 hours);
+        // Make the module the registry admin so executed recoveries can
+        // reassign pass ownership (mirrors the production wiring in setUp).
+        freshRegistry.transferOwnership(address(rec));
 
         string memory did = "did:pkh:fuzz-recovery";
+        // Register the pass being recovered (owner loses their keys).
+        address lostOwner = makeAddr("lostOwner");
+        vm.prank(lostOwner);
+        freshRegistry.createPass(did, makeAddr("fuzzAccount"), "fuzzuser");
+
         vm.prank(gs[0]);
         rec.proposeRecovery(did, candidate);
 

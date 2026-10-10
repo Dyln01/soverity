@@ -200,8 +200,13 @@ contract SoverityRegistry is Ownable {
         string memory normalized = _normalizeAndValidate(username);
         if (bytes(_usernameToDid[normalized]).length != 0) revert UsernameTaken();
 
-        _passes[did] =
-            Pass({did: did, account: account, username: normalized, createdAt: uint64(block.timestamp), updatedAt: uint64(block.timestamp)});
+        _passes[did] = Pass({
+            did: did,
+            account: account,
+            username: normalized,
+            createdAt: uint64(block.timestamp),
+            updatedAt: uint64(block.timestamp)
+        });
         _passOwners[did] = msg.sender;
         _usernameToDid[normalized] = did;
         _accountToDid[account] = did;

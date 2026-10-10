@@ -140,13 +140,8 @@ contract SoverityBadgesTest is Test {
 
         vm.prank(admin);
         badges.burn(tokenId);
-        vm.expectRevert(SoverityBadges.NonexistentToken.selector);
+        // After burn the token is gone: OZ raises ERC721NonexistentToken.
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("ERC721NonexistentToken(uint256)")), tokenId));
         badges.ownerOf(tokenId);
-    }
-}
-
-contract SoulboundReceiver {
-    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
-        return this.onERC721Received.selector;
     }
 }

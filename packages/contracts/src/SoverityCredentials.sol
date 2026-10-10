@@ -81,7 +81,12 @@ contract SoverityCredentials is Ownable {
     /// @param subject The attested subject.
     /// @param attester The issuer.
     event AttestationIssued(
-        bytes32 indexed uid, bytes32 indexed schemaUid, address indexed subject, address attester, bytes32 data, uint64 expiresAt
+        bytes32 indexed uid,
+        bytes32 indexed schemaUid,
+        address indexed subject,
+        address attester,
+        bytes32 data,
+        uint64 expiresAt
     );
 
     /// @notice Emitted when an attestation is revoked.
@@ -144,12 +149,7 @@ contract SoverityCredentials is Ownable {
      *         (keccak256(abi.encode(schemaUid, subject, msg.sender, data, expiresAt))).
      * @dev Anyone may issue attestations as long as the schema exists.
      */
-    function issue(
-        bytes32 schemaUid,
-        address subject,
-        bytes32 data,
-        uint64 expiresAt
-    ) public returns (bytes32 uid) {
+    function issue(bytes32 schemaUid, address subject, bytes32 data, uint64 expiresAt) public returns (bytes32 uid) {
         if (bytes(_schemas[schemaUid].schema).length == 0) revert SchemaNotFound();
         if (subject == address(0)) revert ZeroSubject();
         if (expiresAt != 0 && expiresAt < block.timestamp) revert InvalidExpiry();
@@ -184,12 +184,10 @@ contract SoverityCredentials is Ownable {
      *      with the public COMMITMENT_SALT; a dApp can then verify the
      *      on-chain hash without ever seeing the plaintext on-chain.
      */
-    function issueWithCommitment(
-        bytes32 schemaUid,
-        address subject,
-        bytes32 value,
-        uint64 expiresAt
-    ) external returns (bytes32 uid) {
+    function issueWithCommitment(bytes32 schemaUid, address subject, bytes32 value, uint64 expiresAt)
+        external
+        returns (bytes32 uid)
+    {
         bytes32 commitment = keccak256(abi.encode(value, COMMITMENT_SALT));
         return issue(schemaUid, subject, commitment, expiresAt);
     }
@@ -275,7 +273,11 @@ contract SoverityCredentials is Ownable {
      * @param revocable Whether the schema is revocable.
      * @return The would-be schema UID.
      */
-    function computeSchemaUid(string calldata schema, address resolver, bool revocable) external pure returns (bytes32) {
+    function computeSchemaUid(string calldata schema, address resolver, bool revocable)
+        external
+        pure
+        returns (bytes32)
+    {
         return keccak256(abi.encode(schema, resolver, revocable));
     }
 }
