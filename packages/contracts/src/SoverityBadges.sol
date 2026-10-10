@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ERC721} from "openzeppelin-contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {IERC5192} from "./interfaces/IERC5192.sol";
 
 /**
  * @title SoverityBadges
@@ -155,6 +156,16 @@ contract SoverityBadges is ERC721, Ownable {
      */
     function locked(uint256 tokenId) external view returns (bool) {
         return _ownerOf(tokenId) != address(0);
+    }
+
+    /**
+     * @notice ERC-165: reports support for the EIP-5192 interface
+     *         (0x9d76f020) in addition to ERC-721.
+     * @param interfaceId The interface id to check.
+     * @return True when the interface is supported.
+     */
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721) returns (bool) {
+        return interfaceId == type(IERC5192).interfaceId || super.supportsInterface(interfaceId);
     }
 
     /**

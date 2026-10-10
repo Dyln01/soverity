@@ -1,0 +1,76 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy-web:
+    name: Deploy soverity.xyz to Vercel (production)
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @soverity/ui build
+      - run: pnpm --filter @soverity/sdk build
+      - name: Pull Vercel environment
+        run: pnpm dlx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build for Vercel
+        run: pnpm dlx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to Vercel
+        run: pnpm dlx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+  deploy-contracts:
+    name: Deploy contracts to Base
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [deploy-web]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Deploy Soverity contracts
+        working-directory: packages/contracts
+        env:
+          BASE_RPC_URL: ${{ secrets.BASE_RPC_URL }}
+          DEPLOYER_KEY: ${{ secrets.DEPLOYER_KEY }}
+        run: |
+          forge script script/Deploy.s.sol \
+            --rpc-url "$BASE_RPC_URL" \
+            --broadcast \
+            --private-key "$DEPLOYER_KEY"
+
+  publish-sdk:
+    name: Publish @soverity/sdk to npm
+    runs-on: ubuntu-latest
+    needs: [deploy-web]
+    if: contains(github.event.head_commit.message, 'release')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @soverity/sdk build
+      - run: pnpm --filter @soverity/sdk publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

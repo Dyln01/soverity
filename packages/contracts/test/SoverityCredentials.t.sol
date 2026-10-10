@@ -93,9 +93,9 @@ contract SoverityCredentialsTest is Test {
 
     function test_Issue_RevertWhen_Duplicate() public {
         vm.startPrank(attester);
-        credentials.issue(schemaUid, subject, 0x1, 0);
+        credentials.issue(schemaUid, subject, bytes32(uint256(1)), 0);
         vm.expectRevert(SoverityCredentials.AttestationAlreadyExists.selector);
-        credentials.issue(schemaUid, subject, 0x1, 0);
+        credentials.issue(schemaUid, subject, bytes32(uint256(1)), 0);
         vm.stopPrank();
     }
 
@@ -106,7 +106,7 @@ contract SoverityCredentialsTest is Test {
     function test_Verify_FalseWhenExpired() public {
         uint64 ttl = 1 days;
         vm.prank(attester);
-        bytes32 uid = credentials.issue(schemaUid, subject, 0x1, uint64(block.timestamp + ttl));
+        bytes32 uid = credentials.issue(schemaUid, subject, bytes32(uint256(1)), uint64(block.timestamp + ttl));
 
         assertTrue(credentials.verify(uid));
         vm.warp(block.timestamp + ttl + 1);
@@ -128,7 +128,7 @@ contract SoverityCredentialsTest is Test {
 
     function test_Revoke_HappyPath() public {
         vm.prank(attester);
-        bytes32 uid = credentials.issue(schemaUid, subject, 0x1, 0);
+        bytes32 uid = credentials.issue(schemaUid, subject, bytes32(uint256(1)), 0);
         assertTrue(credentials.verify(uid));
 
         vm.prank(attester);
@@ -143,7 +143,7 @@ contract SoverityCredentialsTest is Test {
 
     function test_Revoke_RevertWhen_NotAttester() public {
         vm.prank(attester);
-        bytes32 uid = credentials.issue(schemaUid, subject, 0x1, 0);
+        bytes32 uid = credentials.issue(schemaUid, subject, bytes32(uint256(1)), 0);
         vm.prank(subject);
         vm.expectRevert(SoverityCredentials.NotAttester.selector);
         credentials.revoke(uid);
@@ -153,7 +153,7 @@ contract SoverityCredentialsTest is Test {
         vm.prank(attester);
         bytes32 nonRevocableUid = credentials.registerSchema("bytes32 id", address(0), false);
         vm.prank(attester);
-        bytes32 uid = credentials.issue(nonRevocableUid, subject, 0x1, 0);
+        bytes32 uid = credentials.issue(nonRevocableUid, subject, bytes32(uint256(1)), 0);
         vm.prank(attester);
         vm.expectRevert(SoverityCredentials.SchemaNotRevocable.selector);
         credentials.revoke(uid);

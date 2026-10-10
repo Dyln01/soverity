@@ -198,8 +198,8 @@ contract SoverityRegistryTest is Test {
         registry.resolveByDid("did:pkh:missing");
     }
 
-    function test_DidOfUsername_ReturnsEmptyForFree() public {
-        assertEq(bytes(registry.didOfUsername("free-name")), 0);
+    function test_DidOfUsername_ReturnsEmptyForFree() public view {
+        assertEq(registry.didOfUsername("free-name"), "");
     }
 
     // ------------------------------------------------------------------
