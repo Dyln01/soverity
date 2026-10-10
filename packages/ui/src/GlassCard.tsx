@@ -1,12 +1,12 @@
-import * as React from "react";
+import type * as React from "react"
 
-export type Elevation = "base" | "raised" | "floating";
+export type Elevation = "base" | "raised" | "floating"
 
 const elevationClass: Record<Elevation, string> = {
   base: "sv-glass",
   raised: "sv-glass-raised",
   floating: "sv-glass-floating",
-};
+}
 
 /**
  * The core glass card: translucent surface, medium blur + saturation,
@@ -21,12 +21,12 @@ export function GlassCard({
   children,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement> & {
-  elevation?: Elevation;
-  glow?: "teal" | "indigo" | "none";
-  interactive?: boolean;
+  elevation?: Elevation
+  glow?: "teal" | "indigo" | "none"
+  interactive?: boolean
 }) {
   const glowClass =
-    glow === "teal" ? "sv-glow-teal-edge" : glow === "indigo" ? "sv-glow-indigo-edge" : "";
+    glow === "teal" ? "sv-glow-teal-edge" : glow === "indigo" ? "sv-glow-indigo-edge" : ""
 
   return (
     <div
@@ -35,5 +35,5 @@ export function GlassCard({
     >
       {children}
     </div>
-  );
+  )
 }

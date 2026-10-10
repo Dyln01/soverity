@@ -7,22 +7,22 @@
  */
 
 export interface VerifiableCredential {
-  "@context": string[];
-  type: string[];
-  issuer: string; // DID
-  credentialSubject: Record<string, unknown>;
-  issuanceDate: string;
-  expirationDate?: string;
-  credentialStatus?: { type: string; revoked: boolean };
+  "@context": string[]
+  type: string[]
+  issuer: string // DID
+  credentialSubject: Record<string, unknown>
+  issuanceDate: string
+  expirationDate?: string
+  credentialStatus?: { type: string; revoked: boolean }
 }
 
 export interface CredentialType {
   /** e.g. "SoverityPass" | "UniqueHuman" | "Over18" */
-  id: string;
+  id: string
   /** Human-readable claim, shown in the share-preview. */
-  label: string;
+  label: string
   /** What a verifier learns — and nothing more. */
-  reveals: string[];
+  reveals: string[]
 }
 
 export const CREDENTIAL_TYPES: CredentialType[] = [
@@ -41,7 +41,7 @@ export const CREDENTIAL_TYPES: CredentialType[] = [
     label: "Over 18",
     reveals: ["that your birthdate is before today minus 18 years", "not your birthdate"],
   },
-];
+]
 
 export function buildCredential(
   typeId: string,
@@ -49,10 +49,10 @@ export function buildCredential(
   subject: Record<string, unknown>,
   ttlDays?: number,
 ): VerifiableCredential {
-  const issuanceDate = new Date().toISOString();
+  const issuanceDate = new Date().toISOString()
   const expirationDate = ttlDays
     ? new Date(Date.now() + ttlDays * 86_400_000).toISOString()
-    : undefined;
+    : undefined
   return {
     "@context": ["https://www.w3.org/ns/credentials/v2"],
     type: ["VerifiableCredential", typeId],
@@ -60,14 +60,14 @@ export function buildCredential(
     credentialSubject: subject,
     issuanceDate,
     ...(expirationDate ? { expirationDate } : {}),
-  };
+  }
 }
 
 export function isExpired(vc: VerifiableCredential, now = Date.now()): boolean {
-  if (!vc.expirationDate) return false;
-  return new Date(vc.expirationDate).getTime() <= now;
+  if (!vc.expirationDate) return false
+  return new Date(vc.expirationDate).getTime() <= now
 }
 
 export function isRevoked(vc: VerifiableCredential): boolean {
-  return vc.credentialStatus?.revoked === true;
+  return vc.credentialStatus?.revoked === true
 }

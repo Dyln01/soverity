@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { verify, issueToken } from "@soverity/sdk/server";
+import { issueToken, verify } from "@soverity/sdk/server"
+import { NextResponse } from "next/server"
 
 /**
  * POST /api/me — the ENTIRE server-side integration of the demo dApp:
@@ -8,20 +8,17 @@ import { verify, issueToken } from "@soverity/sdk/server";
  * Authorization header on every request; the logic is identical.
  */
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => null)) as
-    | { siwe?: { message?: string; signature?: string } }
-    | null;
+  const body = (await req.json().catch(() => null)) as {
+    siwe?: { message?: string; signature?: string }
+  } | null
 
   if (!body?.siwe?.message || !body.siwe.signature) {
-    return NextResponse.json({ valid: false, reason: "malformed" }, { status: 400 });
+    return NextResponse.json({ valid: false, reason: "malformed" }, { status: 400 })
   }
 
-  const secret = process.env.SOVERITY_SESSION_SECRET;
+  const secret = process.env.SOVERITY_SESSION_SECRET
   if (!secret) {
-    return NextResponse.json(
-      { valid: false, reason: "server-misconfigured" },
-      { status: 500 },
-    );
+    return NextResponse.json({ valid: false, reason: "server-misconfigured" }, { status: 500 })
   }
 
   // Mint a short-lived session token for the signed-in DID.
@@ -36,13 +33,13 @@ export async function POST(req: Request) {
       nonce: "demo",
     },
     secret,
-  );
+  )
 
   // The one-line server integration:
   const result = await verify(`Bearer ${token}`, {
     secret,
     requiredScopes: ["openid", "profile"],
-  });
+  })
 
-  return NextResponse.json(result);
+  return NextResponse.json(result)
 }

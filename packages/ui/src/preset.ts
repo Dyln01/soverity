@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
 /**
  * Tailwind preset mapping the Soverity glass tokens onto theme keys.
@@ -79,6 +79,6 @@ const preset: Partial<Config> = {
       },
     },
   },
-};
+}
 
-export default preset;
+export default preset

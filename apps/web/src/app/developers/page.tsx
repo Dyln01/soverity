@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "next/link"
 
 const steps = [
   {
@@ -22,7 +22,7 @@ const steps = [
   {
     n: "4",
     title: "Verify server-side",
-    code: 'const session = await verify(req.headers.authorization, { secret })',
+    code: "const session = await verify(req.headers.authorization, { secret })",
     body: "One function call from @soverity/sdk/server. Bearer token, HMAC-checked, scope-verified.",
   },
   {
@@ -31,11 +31,11 @@ const steps = [
     code: "// no keys, no redirects, no webhooks",
     body: "That's the whole integration. Your users never see a seed phrase or a gas fee.",
   },
-];
+]
 
 export const metadata = {
   title: "Developers — one line to ship",
-};
+}
 
 export default function DevelopersPage() {
   return (
@@ -114,5 +114,5 @@ export default function DevelopersPage() {
         </Link>
       </p>
     </div>
-  );
+  )
 }

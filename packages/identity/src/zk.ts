@@ -9,36 +9,36 @@
  */
 
 export interface ProofRequest {
-  claim: "unique_human" | "over_18" | string;
+  claim: "unique_human" | "over_18" | string
   /** Salt from the user's pass — never shared. */
-  salt: string;
+  salt: string
   /** Attestation UID from SoverityCredentials on-chain. */
-  attestationUid: string;
+  attestationUid: string
 }
 
 export interface Proof {
-  claim: string;
-  commitment: string;
-  predicate: string;
-  attestationUid: string;
-  generatedAt: number;
+  claim: string
+  commitment: string
+  predicate: string
+  attestationUid: string
+  generatedAt: number
 }
 
 async function sha256Hex(input: string): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
-  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input))
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("")
 }
 
 /** Generate a ZK-style predicate proof locally. */
 export async function generateProof(req: ProofRequest): Promise<Proof> {
-  const commitment = await sha256Hex(`${req.claim}:${req.salt}:${req.attestationUid}`);
+  const commitment = await sha256Hex(`${req.claim}:${req.salt}:${req.attestationUid}`)
   return {
     claim: req.claim,
     commitment,
     predicate: `holds(${req.claim}) == true`,
     attestationUid: req.attestationUid,
     generatedAt: Date.now(),
-  };
+  }
 }
 
 /**
@@ -50,8 +50,8 @@ export async function verifyProof(
   proof: Proof,
   opts: { validCommitments: Set<string>; maxAgeMs?: number },
 ): Promise<boolean> {
-  const maxAge = opts.maxAgeMs ?? 10 * 60_000;
-  if (Date.now() - proof.generatedAt > maxAge) return false;
-  if (!proof.commitment || !proof.predicate) return false;
-  return opts.validCommitments.has(proof.commitment);
+  const maxAge = opts.maxAgeMs ?? 10 * 60_000
+  if (Date.now() - proof.generatedAt > maxAge) return false
+  if (!proof.commitment || !proof.predicate) return false
+  return opts.validCommitments.has(proof.commitment)
 }

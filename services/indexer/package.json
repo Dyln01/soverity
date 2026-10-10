@@ -1,21 +1,21 @@
 {
-  "name": "@soverity/indexer",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "ponder build",
-    "dev": "ponder dev",
-    "start": "ponder start",
-    "lint": "biome check src",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@ponder/core": "^0.7.17",
-    "viem": "^2.21.0"
-  },
-  "devDependencies": {
-    "@soverity/config": "workspace:*",
-    "typescript": "^5.7.2"
-  }
+	"name": "@soverity/indexer",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "ponder build",
+		"dev": "ponder dev",
+		"start": "ponder start",
+		"lint": "biome check src",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@ponder/core": "^0.7.17",
+		"viem": "^2.21.0"
+	},
+	"devDependencies": {
+		"@soverity/config": "workspace:*",
+		"typescript": "^5.7.2"
+	}
 }

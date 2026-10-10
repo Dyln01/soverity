@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import "@soverity/ui/styles.css";
+import type { Metadata } from "next"
+import "@soverity/ui/styles.css"
 
 export const metadata: Metadata = {
   title: "Soverity Docs",
   description: "Developer documentation for the Soverity SDK and protocol.",
-};
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -19,5 +19,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
       </body>
     </html>
-  );
+  )
 }

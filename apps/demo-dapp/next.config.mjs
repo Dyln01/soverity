@@ -2,6 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@soverity/ui", "@soverity/sdk"],
-};
+}
 
-export default nextConfig;
+export default nextConfig

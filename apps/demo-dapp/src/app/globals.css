@@ -2,8 +2,8 @@
 @import "@soverity/sdk/styles.css";
 
 body {
-  background-color: var(--sv-base);
-  color: var(--sv-text);
-  min-height: 100dvh;
-  font-family: Inter, system-ui, sans-serif;
+	background-color: var(--sv-base);
+	color: var(--sv-text);
+	min-height: 100dvh;
+	font-family: Inter, system-ui, sans-serif;
 }

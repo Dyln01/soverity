@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { SoverityButton } from "@soverity/sdk";
-import type { SignInResult } from "@soverity/sdk";
-import { GlassCard } from "@soverity/ui";
+import { SoverityButton } from "@soverity/sdk"
+import type { SignInResult } from "@soverity/sdk"
+import { GlassCard } from "@soverity/ui"
+import { useEffect, useState } from "react"
 
 /**
  * /pass — the Soverity passport dashboard: profile, credentials, and the
  * permissions panel. Sign-in via the same SoverityButton the SDK ships.
  */
 export function PassClient() {
-  const [result, setResult] = useState<SignInResult | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [result, setResult] = useState<SignInResult | null>(null)
+  const [mounted, setMounted] = useState(false)
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => setMounted(true), [])
 
-  const session = result?.session;
+  const session = result?.session
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
@@ -54,8 +54,8 @@ export function PassClient() {
               Credentials
             </h2>
             <p className="text-sm" style={{ color: "var(--sv-text-muted)" }}>
-              Encrypted, client-side. Import verifiable credentials, scan a QR
-              code, or mint from partners — coming with phase 2 proofs.
+              Encrypted, client-side. Import verifiable credentials, scan a QR code, or mint from
+              partners — coming with phase 2 proofs.
             </p>
           </GlassCard>
 
@@ -64,12 +64,11 @@ export function PassClient() {
               Permissions
             </h2>
             <p className="text-sm" style={{ color: "var(--sv-text-muted)" }}>
-              Every app you connect appears here. Revoke anything, anytime —
-              on-chain, instantly.
+              Every app you connect appears here. Revoke anything, anytime — on-chain, instantly.
             </p>
           </GlassCard>
         </div>
       )}
     </div>
-  );
+  )
 }

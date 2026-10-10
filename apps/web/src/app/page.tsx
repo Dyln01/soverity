@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "next/link"
 
 const features = [
   {
@@ -17,24 +17,24 @@ const features = [
     title: "Portable identity",
     body: "DIDs, verifiable credentials and on-chain attestations follow you across every app, everywhere.",
   },
-];
+]
 
 export default function Home() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-16 md:py-24">
       <header className="mb-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span
-            aria-hidden="true"
-            style={{ color: "var(--sv-teal)", fontSize: 24, lineHeight: 1 }}
-          >
+          <span aria-hidden="true" style={{ color: "var(--sv-teal)", fontSize: 24, lineHeight: 1 }}>
             ◇
           </span>
           <span className="text-lg font-semibold" style={{ color: "var(--sv-text)" }}>
             Soverity
           </span>
         </div>
-        <nav className="flex items-center gap-6 text-sm" style={{ color: "var(--sv-text-secondary)" }}>
+        <nav
+          className="flex items-center gap-6 text-sm"
+          style={{ color: "var(--sv-text-secondary)" }}
+        >
           <a href="#how" className="hover:underline">
             How it works
           </a>
@@ -66,12 +66,9 @@ export default function Home() {
           <br />
           Google-simple.
         </h1>
-        <p
-          className="mx-auto mb-10 max-w-xl text-lg"
-          style={{ color: "var(--sv-text-secondary)" }}
-        >
-          One click to sign in. One line to add a passport. One line to verify.
-          Your identity, your keys — on Base.
+        <p className="mx-auto mb-10 max-w-xl text-lg" style={{ color: "var(--sv-text-secondary)" }}>
+          One click to sign in. One line to add a passport. One line to verify. Your identity, your
+          keys — on Base.
         </p>
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
@@ -126,8 +123,8 @@ export default function Home() {
         style={{ borderColor: "var(--sv-border-soft)", color: "var(--sv-text-muted)" }}
       >
         <p>
-          Soverity — user-owned identity. This site never asks for your legal
-          name, government ID, or address.
+          Soverity — user-owned identity. This site never asks for your legal name, government ID,
+          or address.
         </p>
         <p className="mt-2">
           <a href="/developers" style={{ color: "var(--sv-teal)" }}>
@@ -136,5 +133,5 @@ export default function Home() {
         </p>
       </footer>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsup"
 
 const common = {
   splitting: false,
@@ -6,7 +6,7 @@ const common = {
   clean: true,
   treeshake: true,
   target: "es2022",
-} as const;
+} as const
 
 export default defineConfig([
   // library entries
@@ -34,4 +34,4 @@ export default defineConfig([
 }`,
     },
   },
-]);
+])

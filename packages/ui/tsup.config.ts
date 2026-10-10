@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsup"
 
 const shared = {
   entry: ["src/index.ts", "src/preset.ts"],
@@ -7,8 +7,6 @@ const shared = {
   sourcemap: true,
   clean: true,
   external: ["react", "react-dom"],
-} as const;
+} as const
 
-export default defineConfig([
-  shared,
-]);
+export default defineConfig([shared])

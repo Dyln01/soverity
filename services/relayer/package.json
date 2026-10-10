@@ -1,25 +1,25 @@
 {
-  "name": "@soverity/relayer",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
-    "lint": "biome check src",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "fastify": "^5.2.1"
-  },
-  "devDependencies": {
-    "@soverity/config": "workspace:*",
-    "@types/node": "^22.10.2",
-    "tsx": "^4.19.2",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
-  }
+	"name": "@soverity/relayer",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsx watch src/server.ts",
+		"start": "node dist/server.js",
+		"lint": "biome check src",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"fastify": "^5.2.1"
+	},
+	"devDependencies": {
+		"@soverity/config": "workspace:*",
+		"@types/node": "^22.10.2",
+		"tsx": "^4.19.2",
+		"tsup": "^8.3.5",
+		"typescript": "^5.7.2",
+		"vitest": "^2.1.8"
+	}
 }

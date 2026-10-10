@@ -1,4 +1,4 @@
-import type { DetectedAccount, SoverityHint } from "./types";
+import type { DetectedAccount, SoverityHint } from "./types"
 
 /**
  * Account detection — four layers in priority order:
@@ -13,50 +13,51 @@ import type { DetectedAccount, SoverityHint } from "./types";
 
 export interface DetectOptions {
   /** Origin of the Soverity web app that serves the postMessage bridge. */
-  soverityOrigin?: string;
+  soverityOrigin?: string
   /** Abort probing after this many ms (the 150ms skeleton grace period). */
-  timeoutMs?: number;
+  timeoutMs?: number
 }
 
-const DEFAULT_ORIGIN = "https://soverity.xyz";
+const DEFAULT_ORIGIN = "https://soverity.xyz"
 
 /** Layer 1: injected provider vault, no network call. */
 async function detectInjected(): Promise<DetectedAccount[]> {
-  const provider = (globalThis as Record<string, unknown>).soverity;
+  const provider = (globalThis as Record<string, unknown>).soverity
   if (!provider || typeof (provider as { listAccounts?: unknown }).listAccounts !== "function") {
-    return [];
+    return []
   }
   try {
-    const accounts = await (provider as { listAccounts: () => Promise<DetectedAccount[]> })
-      .listAccounts();
-    return accounts.filter((a) => a.username && a.avatarUrl);
+    const accounts = await (
+      provider as { listAccounts: () => Promise<DetectedAccount[]> }
+    ).listAccounts()
+    return accounts.filter((a) => a.username && a.avatarUrl)
   } catch {
-    return [];
+    return []
   }
 }
 
 /** Layer 2: cross-site hint via iframe postMessage bridge on soverity.xyz. */
 async function detectIframeHint(origin: string, timeoutMs: number): Promise<DetectedAccount[]> {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") return []
   return new Promise((resolve) => {
-    let iframe: HTMLIFrameElement | null = null;
+    let iframe: HTMLIFrameElement | null = null
     const timer = setTimeout(() => {
-      cleanup();
-      resolve([]);
-    }, timeoutMs);
+      cleanup()
+      resolve([])
+    }, timeoutMs)
 
     function cleanup() {
-      clearTimeout(timer);
-      window.removeEventListener("message", onMessage);
-      iframe?.remove();
+      clearTimeout(timer)
+      window.removeEventListener("message", onMessage)
+      iframe?.remove()
     }
 
     function onMessage(event: MessageEvent) {
-      if (event.origin !== origin) return;
-      const data = event.data as { type?: string; hint?: SoverityHint[] | SoverityHint };
-      if (data?.type !== "soverity:hint" || !data.hint) return;
-      cleanup();
-      const hints = Array.isArray(data.hint) ? data.hint : [data.hint];
+      if (event.origin !== origin) return
+      const data = event.data as { type?: string; hint?: SoverityHint[] | SoverityHint }
+      if (data?.type !== "soverity:hint" || !data.hint) return
+      cleanup()
+      const hints = Array.isArray(data.hint) ? data.hint : [data.hint]
       resolve(
         hints
           .filter((h) => h.username && h.avatarUrl)
@@ -67,29 +68,29 @@ async function detectIframeHint(origin: string, timeoutMs: number): Promise<Dete
             ensName: h.ensName,
             lastUsed: i === 0,
           })),
-      );
+      )
     }
 
-    window.addEventListener("message", onMessage);
-    iframe = document.createElement("iframe");
-    iframe.src = `${origin}/bridge`;
-    iframe.style.display = "none";
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.tabIndex = -1;
-    document.body.appendChild(iframe);
-  });
+    window.addEventListener("message", onMessage)
+    iframe = document.createElement("iframe")
+    iframe.src = `${origin}/bridge`
+    iframe.style.display = "none"
+    iframe.setAttribute("aria-hidden", "true")
+    iframe.tabIndex = -1
+    document.body.appendChild(iframe)
+  })
 }
 
 /** Layer 3: passkey presence for this origin (never creates credentials). */
 async function detectPasskey(): Promise<boolean> {
   const PublicKeyCredential = (globalThis as Record<string, unknown>).PublicKeyCredential as
     | { isUserMediationAvailable?: () => Promise<boolean> }
-    | undefined;
-  if (!PublicKeyCredential?.isUserMediationAvailable) return false;
+    | undefined
+  if (!PublicKeyCredential?.isUserMediationAvailable) return false
   try {
-    return await PublicKeyCredential.isUserMediationAvailable();
+    return await PublicKeyCredential.isUserMediationAvailable()
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -98,24 +99,24 @@ async function detectPasskey(): Promise<boolean> {
  * accounts wins; lower layers only run when the ones above came up empty.
  */
 export async function detectAccounts(options: DetectOptions = {}): Promise<{
-  accounts: DetectedAccount[];
-  hasPasskey: boolean;
+  accounts: DetectedAccount[]
+  hasPasskey: boolean
 }> {
-  const origin = options.soverityOrigin ?? DEFAULT_ORIGIN;
-  const timeoutMs = options.timeoutMs ?? 3000;
+  const origin = options.soverityOrigin ?? DEFAULT_ORIGIN
+  const timeoutMs = options.timeoutMs ?? 3000
 
-  const injected = await detectInjected();
+  const injected = await detectInjected()
   if (injected.length > 0) {
-    return { accounts: injected, hasPasskey: false };
+    return { accounts: injected, hasPasskey: false }
   }
 
-  const hinted = await detectIframeHint(origin, timeoutMs);
+  const hinted = await detectIframeHint(origin, timeoutMs)
   if (hinted.length > 0) {
-    return { accounts: hinted, hasPasskey: false };
+    return { accounts: hinted, hasPasskey: false }
   }
 
-  const hasPasskey = await detectPasskey();
-  return { accounts: [], hasPasskey };
+  const hasPasskey = await detectPasskey()
+  return { accounts: [], hasPasskey }
 }
 
 /** Normalize raw hint rows into DetectedAccount shape. */
@@ -128,5 +129,5 @@ export function toAccounts(hints: SoverityHint[]): DetectedAccount[] {
       username: h.username,
       ensName: h.ensName,
       lastUsed: i === 0,
-    }));
+    }))
 }

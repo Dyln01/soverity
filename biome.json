@@ -1,13 +1,23 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-  "files": { "include": ["apps/**", "packages/**", "services/**"] },
+  "files": {
+    "include": ["apps/**", "packages/**", "services/**"],
+    "ignore": [
+      "**/lib/**",
+      "**/out/**",
+      "**/cache/**",
+      "**/node_modules/**",
+      "**/broadcast/**",
+      "**/node_modules/.pnpm/**"
+    ]
+  },
   "organizeImports": { "enabled": true },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
-      "suspicious": { "noExplicitAny": "off", "noArrayDeleteKey": "off" },
+      "suspicious": { "noExplicitAny": "off" },
       "correctness": { "noUnusedVariables": "warn", "noUnusedImports": "warn" },
       "style": { "useNodejsImportProtocol": "error" }
     }

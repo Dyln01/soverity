@@ -2,19 +2,19 @@
 @import "@soverity/sdk/styles.css";
 
 :root {
-  color-scheme: dark light;
+	color-scheme: dark light;
 }
 
 html {
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+	font-family: Inter, system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background-color: var(--sv-base);
-  color: var(--sv-text);
-  min-height: 100dvh;
+	background-color: var(--sv-base);
+	color: var(--sv-text);
+	min-height: 100dvh;
 }
 
 ::selection {
-  background: rgba(20, 242, 208, 0.25);
+	background: rgba(20, 242, 208, 0.25);
 }

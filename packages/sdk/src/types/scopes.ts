@@ -7,7 +7,7 @@ export type Scope =
   | "proof:unique_human"
   | "proof:over_18"
   | "address"
-  | "email";
+  | "email"
 
 export const SCOPE_BIT: Record<Scope, number> = {
   openid: 1 << 0,
@@ -18,12 +18,12 @@ export const SCOPE_BIT: Record<Scope, number> = {
   "proof:over_18": 1 << 5,
   address: 1 << 6,
   email: 1 << 7,
-};
+}
 
 /** Serialize scopes to the on-chain bitmask used by SoverityPermissions. */
 export function scopesToBitmask(scopes: Scope[]): number {
-  return scopes.reduce((mask, s) => mask | (SCOPE_BIT[s] ?? 0), 0);
+  return scopes.reduce((mask, s) => mask | (SCOPE_BIT[s] ?? 0), 0)
 }
 
 /** Minimum required on every request; granted implicitly. */
-export const REQUIRED_SCOPES: Scope[] = ["openid"];
+export const REQUIRED_SCOPES: Scope[] = ["openid"]

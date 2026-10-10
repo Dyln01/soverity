@@ -1,7 +1,7 @@
-import * as React from "react";
-import type { DetectedAccount, Scope, SignInResult } from "../types";
-import { detectAccounts } from "../detect";
-import { loadHint, profilePreviewEnabled } from "../store";
+import * as React from "react"
+import { detectAccounts } from "../detect"
+import { loadHint, profilePreviewEnabled } from "../store"
+import type { DetectedAccount, Scope, SignInResult } from "../types"
 
 /**
  * SoverityButton — the entire Sign-in-with-Soverity integration.
@@ -14,15 +14,15 @@ import { loadHint, profilePreviewEnabled } from "../store";
  */
 
 export interface SoverityButtonProps {
-  scopes?: Scope[];
-  onSuccess?: (result: SignInResult) => void;
-  soverityOrigin?: string;
-  className?: string;
+  scopes?: Scope[]
+  onSuccess?: (result: SignInResult) => void
+  soverityOrigin?: string
+  className?: string
 }
 
-type Phase = "probing" | "none" | "last-used" | "multi" | "offline";
+type Phase = "probing" | "none" | "last-used" | "multi" | "offline"
 
-const SKELETON_GRACE_MS = 150;
+const SKELETON_GRACE_MS = 150
 
 export function SoverityButton({
   scopes = ["openid"],
@@ -30,32 +30,31 @@ export function SoverityButton({
   soverityOrigin,
   className = "",
 }: SoverityButtonProps) {
-  const [phase, setPhase] = React.useState<Phase>("probing");
-  const [showSkeleton, setShowSkeleton] = React.useState(false);
-  const [accounts, setAccounts] = React.useState<DetectedAccount[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const rootRef = React.useRef<HTMLDivElement>(null);
-  const btnRef = React.useRef<HTMLButtonElement>(null);
+  const [phase, setPhase] = React.useState<Phase>("probing")
+  const [showSkeleton, setShowSkeleton] = React.useState(false)
+  const [accounts, setAccounts] = React.useState<DetectedAccount[]>([])
+  const [open, setOpen] = React.useState(false)
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  const btnRef = React.useRef<HTMLButtonElement>(null)
 
   // ---- detection (layers 1→3, priority order) ----
   React.useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     const skeletonTimer = setTimeout(() => {
-      if (!cancelled) setShowSkeleton(true);
-    }, SKELETON_GRACE_MS);
-
-    (async () => {
+      if (!cancelled) setShowSkeleton(true)
+    }, SKELETON_GRACE_MS)
+    ;(async () => {
       if (typeof navigator !== "undefined" && navigator.onLine === false) {
-        if (!cancelled) setPhase("offline");
-        return;
+        if (!cancelled) setPhase("offline")
+        return
       }
       if (!profilePreviewEnabled()) {
-        if (!cancelled) setPhase("none");
-        return;
+        if (!cancelled) setPhase("none")
+        return
       }
       // serve the cached hint instantly, then refresh from detection
-      const cached = loadHint();
+      const cached = loadHint()
       if (cached && !cancelled) {
         setAccounts([
           {
@@ -65,58 +64,58 @@ export function SoverityButton({
             ensName: cached.ensName,
             lastUsed: true,
           },
-        ]);
-        setPhase("last-used");
+        ])
+        setPhase("last-used")
       }
-      const { accounts: found } = await detectAccounts({ soverityOrigin });
-      if (cancelled) return;
-      clearTimeout(skeletonTimer);
-      setShowSkeleton(false);
+      const { accounts: found } = await detectAccounts({ soverityOrigin })
+      if (cancelled) return
+      clearTimeout(skeletonTimer)
+      setShowSkeleton(false)
       if (found.length === 0) {
-        if (!cached) setPhase("none");
-        return;
+        if (!cached) setPhase("none")
+        return
       }
-      setAccounts(found);
-      setPhase(found.length > 1 ? "multi" : "last-used");
-    })();
+      setAccounts(found)
+      setPhase(found.length > 1 ? "multi" : "last-used")
+    })()
 
     return () => {
-      cancelled = true;
-      clearTimeout(skeletonTimer);
-    };
-  }, [soverityOrigin]);
+      cancelled = true
+      clearTimeout(skeletonTimer)
+    }
+  }, [soverityOrigin])
 
   // ---- online/offline transitions ----
   React.useEffect(() => {
-    const goOnline = () => setPhase((p) => (p === "offline" ? "probing" : p));
-    const goOffline = () => setPhase("offline");
-    window.addEventListener("online", goOnline);
-    window.addEventListener("offline", goOffline);
+    const goOnline = () => setPhase((p) => (p === "offline" ? "probing" : p))
+    const goOffline = () => setPhase("offline")
+    window.addEventListener("online", goOnline)
+    window.addEventListener("offline", goOffline)
     return () => {
-      window.removeEventListener("online", goOnline);
-      window.removeEventListener("offline", goOffline);
-    };
-  }, []);
+      window.removeEventListener("online", goOnline)
+      window.removeEventListener("offline", goOffline)
+    }
+  }, [])
 
   // ---- close dropdown on outside click / Escape ----
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) return
     function onDocMouseDown(e: MouseEvent) {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        setOpen(false);
-        btnRef.current?.focus();
+        setOpen(false)
+        btnRef.current?.focus()
       }
     }
-    document.addEventListener("mousedown", onDocMouseDown);
-    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDocMouseDown)
+    document.addEventListener("keydown", onKey)
     return () => {
-      document.removeEventListener("mousedown", onDocMouseDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
+      document.removeEventListener("mousedown", onDocMouseDown)
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [open])
 
   const signIn = React.useCallback(
     (account?: DetectedAccount) => {
@@ -124,14 +123,14 @@ export function SoverityButton({
       // Soverity provider (extension/in-app browser) or the web app's
       // passkey flow. The SDK exposes the hooks; the MVP ships a
       // window-event-based handshake consumed by apps/web.
-      const detail = { scopes, account: account ?? accounts[0] ?? null };
-      const acknowledge = (result: SignInResult) => onSuccess?.(result);
+      const detail = { scopes, account: account ?? accounts[0] ?? null }
+      const acknowledge = (result: SignInResult) => onSuccess?.(result)
       window.dispatchEvent(
         new CustomEvent("soverity:signin", { detail: { ...detail, acknowledge } }),
-      );
+      )
     },
     [accounts, onSuccess, scopes],
-  );
+  )
 
   // ---- render ----
 
@@ -143,13 +142,14 @@ export function SoverityButton({
           <span className="sv-btn-offline">Offline — retrying…</span>
         </button>
       </div>
-    );
+    )
   }
 
   if (phase === "probing") {
-    if (!showSkeleton) return <div className={`sv-btn-root ${className}`} />;
+    if (!showSkeleton) return <div className={`sv-btn-root ${className}`} />
     return (
       <div className={`sv-btn-root ${className}`}>
+        {/* biome-ignore lint/a11y/useSemanticElements: role=status on a non-interactive skeleton is the ARIA-correct live region */}
         <div className="sv-btn sv-btn-skeleton" aria-label="Checking Soverity" role="status">
           <span className="sv-btn-mark">◇</span>
           <span
@@ -167,7 +167,7 @@ export function SoverityButton({
           </span>
         </div>
       </div>
-    );
+    )
   }
 
   if (phase === "none") {
@@ -185,15 +185,15 @@ export function SoverityButton({
           <span>Sign in with Soverity</span>
         </button>
       </div>
-    );
+    )
   }
 
   // states: last-used | multi
-  const account = accounts[0];
+  const account = accounts[0]
   const label =
     phase === "multi"
       ? `Continue as ${account?.username}. Button. Press Enter to sign in.`
-      : `Continue as ${account?.username}. Button. Press Enter to sign in.`;
+      : `Continue as ${account?.username}. Button. Press Enter to sign in.`
 
   return (
     <div className={`sv-btn-root ${className}`} ref={rootRef}>
@@ -201,18 +201,18 @@ export function SoverityButton({
         type="button"
         className="sv-btn"
         ref={btnRef}
-        aria-haspopup="listbox"
+        aria-haspopup="menu"
         aria-expanded={open}
         aria-label={label}
         onClick={() => (phase === "multi" ? setOpen((o) => !o) : signIn())}
         onKeyDown={(e) => {
           if (phase === "multi" && (e.key === "ArrowDown" || e.key === "Enter")) {
-            e.preventDefault();
-            setOpen(true);
+            e.preventDefault()
+            setOpen(true)
             // focus first row on next frame
             requestAnimationFrame(() => {
-              rootRef.current?.querySelector<HTMLButtonElement>(".sv-dropdown-row")?.focus();
-            });
+              rootRef.current?.querySelector<HTMLButtonElement>(".sv-dropdown-row")?.focus()
+            })
           }
         }}
       >
@@ -223,7 +223,7 @@ export function SoverityButton({
           width={32}
           height={32}
           onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.visibility = "hidden";
+            ;(e.currentTarget as HTMLImageElement).style.visibility = "hidden"
           }}
         />
         <span className="sv-btn-name">
@@ -236,22 +236,22 @@ export function SoverityButton({
       </button>
 
       {phase === "multi" && open && (
-        <div className="sv-dropdown" role="listbox" aria-label="Choose a Soverity Pass">
+        <div className="sv-dropdown" role="menu" aria-label="Choose a Soverity Pass">
           {accounts.map((a) => (
             <button
               key={a.id}
               type="button"
-              role="option"
-              aria-selected={a.lastUsed}
+              role="menuitem"
+              aria-current={a.lastUsed}
               className="sv-dropdown-row"
               onClick={() => {
-                setOpen(false);
-                signIn(a);
+                setOpen(false)
+                signIn(a)
               }}
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
-                  setOpen(false);
-                  btnRef.current?.focus();
+                  setOpen(false)
+                  btnRef.current?.focus()
                 }
               }}
             >
@@ -265,10 +265,11 @@ export function SoverityButton({
           <div className="sv-dropdown-divider" />
           <button
             type="button"
+            role="menuitem"
             className="sv-dropdown-row"
             onClick={() => {
-              setOpen(false);
-              signIn();
+              setOpen(false)
+              signIn()
             }}
           >
             Use another Soverity Pass
@@ -276,5 +277,5 @@ export function SoverityButton({
         </div>
       )}
     </div>
-  );
+  )
 }

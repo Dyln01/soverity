@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
-const AVATARS = ["🦊", "🐼", "🦄", "🐝", "🦉", "🐙", "🌸", "⚡"];
+const AVATARS = ["🦊", "🐼", "🦄", "🐝", "🦉", "🐙", "🌸", "⚡"]
 
 /**
  * Pass creation — the whole onboarding:
@@ -17,61 +17,64 @@ const AVATARS = ["🦊", "🐼", "🦄", "🐝", "🦉", "🐙", "🌸", "⚡"];
  */
 
 export function CreatePassForm() {
-  const router = useRouter();
-  const [step, setStep] = useState<"intro" | "username" | "creating" | "done">("intro");
-  const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [step, setStep] = useState<"intro" | "username" | "creating" | "done">("intro")
+  const [username, setUsername] = useState("")
+  const [avatar, setAvatar] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const usernameValid = /^[a-z0-9_]{3,32}$/.test(username);
+  const usernameValid = /^[a-z0-9_]{3,32}$/.test(username)
 
   async function createPass() {
-    setError(null);
+    setError(null)
     if (!usernameValid) {
-      setError("3–32 characters: lowercase letters, numbers, underscores.");
-      return;
+      setError("3–32 characters: lowercase letters, numbers, underscores.")
+      return
     }
-    setStep("creating");
+    setStep("creating")
 
     try {
       // WebAuthn passkey creation — the sovereign key ceremony.
       // Falls back to a software credential in browsers without platform
       // authenticators (testing, older devices).
-      const created = await createPasskey();
+      const created = await createPasskey()
 
       // Derive the embedded wallet + DID locally. Nothing leaves the device
       // except the username registration on SoverityRegistry.
-      const pass = await window.fetch("/api/pass", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ username, avatar, credential: created.id }),
-      }).then((r) => r.json());
+      const pass = await window
+        .fetch("/api/pass", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ username, avatar, credential: created.id }),
+        })
+        .then((r) => r.json())
 
       if (pass.error) {
-        setError(pass.error);
-        setStep("username");
-        return;
+        setError(pass.error)
+        setStep("username")
+        return
       }
 
-      setStep("done");
-      setTimeout(() => router.push("/pass"), 1200);
+      setStep("done")
+      setTimeout(() => router.push("/pass"), 1200)
     } catch {
-      setError("Passkey creation was cancelled. Try again when ready.");
-      setStep("username");
+      setError("Passkey creation was cancelled. Try again when ready.")
+      setStep("username")
     }
   }
 
   if (step === "intro") {
     return (
       <div className="sv-glass sv-focus p-8 text-center">
-        <div className="mb-4 text-5xl" aria-hidden="true">◇</div>
+        <div className="mb-4 text-5xl" aria-hidden="true">
+          ◇
+        </div>
         <h1 className="mb-2 text-2xl font-semibold" style={{ color: "var(--sv-text)" }}>
           Create your Soverity Pass
         </h1>
         <p className="mb-8" style={{ color: "var(--sv-text-secondary)" }}>
-          One biometric tap creates your passkey, your embedded wallet, and
-          your decentralized identity. No seed phrase. No KYC. Under 30
-          seconds.
+          One biometric tap creates your passkey, your embedded wallet, and your decentralized
+          identity. No seed phrase. No KYC. Under 30 seconds.
         </p>
         <button
           type="button"
@@ -85,11 +88,12 @@ export function CreatePassForm() {
           You'll be able to add Google or email for <em>recovery only</em> — never for identity.
         </p>
       </div>
-    );
+    )
   }
 
   if (step === "creating" || step === "done") {
     return (
+      // biome-ignore lint/a11y/useSemanticElements: role=status is the ARIA-correct pattern for async outcome announcements
       <div className="sv-glass sv-focus p-8 text-center" role="status" aria-live="polite">
         <div className="mb-4 text-4xl" aria-hidden="true">
           {step === "done" ? "✓" : "◇"}
@@ -103,7 +107,7 @@ export function CreatePassForm() {
             : "Generating your embedded wallet and DID locally."}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -112,14 +116,19 @@ export function CreatePassForm() {
         Choose your identity
       </h1>
       <p className="mb-6 text-sm" style={{ color: "var(--sv-text-secondary)" }}>
-        Pseudonymous by default — this is what other apps will see on your
-        sign-in button, never your legal name.
+        Pseudonymous by default — this is what other apps will see on your sign-in button, never
+        your legal name.
       </p>
 
-      <label className="mb-2 block text-sm" style={{ color: "var(--sv-text-secondary)" }}>
+      <label
+        className="mb-2 block text-sm"
+        htmlFor="username"
+        style={{ color: "var(--sv-text-secondary)" }}
+      >
         Username
       </label>
       <input
+        id="username"
         value={username}
         onChange={(e) => setUsername(e.target.value.toLowerCase())}
         placeholder="nova"
@@ -140,9 +149,9 @@ export function CreatePassForm() {
         3–32 chars · lowercase, numbers, underscores · claimable like an ENS name
       </p>
 
-      <label className="mb-3 block text-sm" style={{ color: "var(--sv-text-secondary)" }}>
+      <span className="mb-3 block text-sm" style={{ color: "var(--sv-text-secondary)" }}>
         Avatar
-      </label>
+      </span>
       <div className="mb-8 flex flex-wrap gap-3">
         {AVATARS.map((a) => (
           <button
@@ -156,10 +165,7 @@ export function CreatePassForm() {
               width: 52,
               height: 52,
               fontSize: 24,
-              border:
-                avatar === a
-                  ? "2px solid var(--sv-teal)"
-                  : "1px solid var(--sv-border-soft)",
+              border: avatar === a ? "2px solid var(--sv-teal)" : "1px solid var(--sv-border-soft)",
               background: avatar === a ? "rgba(20,242,208,0.1)" : "var(--sv-glass)",
             }}
           >
@@ -184,28 +190,31 @@ export function CreatePassForm() {
         Create my Pass
       </button>
     </div>
-  );
+  )
 }
 
 /** Minimal WebAuthn ceremony (client-side, no external deps). */
 async function createPasskey(): Promise<{ id: string }> {
   if (typeof window === "undefined" || !window.PublicKeyCredential) {
-    return { id: `soft-${crypto.randomUUID()}` };
+    return { id: `soft-${crypto.randomUUID()}` }
   }
-  const challenge = crypto.getRandomValues(new Uint8Array(32));
-  const userId = crypto.getRandomValues(new Uint8Array(16));
+  const challenge = crypto.getRandomValues(new Uint8Array(32))
+  const userId = crypto.getRandomValues(new Uint8Array(16))
   const credential = (await navigator.credentials.create({
     publicKey: {
       challenge,
       rp: { name: "Soverity", id: location.hostname },
       user: { id: userId, name: "soverity-pass", displayName: "Soverity Pass" },
-      pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+      pubKeyCredParams: [
+        { type: "public-key", alg: -7 },
+        { type: "public-key", alg: -257 },
+      ],
       authenticatorSelection: {
         residentKey: "required",
         userVerification: "required",
       },
       timeout: 60_000,
     },
-  })) as PublicKeyCredential | null;
-  return { id: credential?.id ?? `soft-${crypto.randomUUID()}` };
+  })) as PublicKeyCredential | null
+  return { id: credential?.id ?? `soft-${crypto.randomUUID()}` }
 }

@@ -1,8 +1,8 @@
-import { CreatePassForm } from "./CreatePassForm";
+import { CreatePassForm } from "./CreatePassForm"
 
 export const metadata = {
   title: "Create your Soverity Pass",
-};
+}
 
 export default function CreatePassPage() {
   return (
@@ -11,5 +11,5 @@ export default function CreatePassPage() {
         <CreatePassForm />
       </div>
     </div>
-  );
+  )
 }

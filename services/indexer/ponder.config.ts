@@ -1,4 +1,4 @@
-import type { Config } from "ponder";
+import type { Config } from "ponder"
 
 /**
  * Ponder indexer — reads Soverity contract events from Base and serves
@@ -12,7 +12,10 @@ export const config: Config = {
     {
       name: "base",
       chainId: 8453,
-      transport: { type: "http", options: { url: process.env.BASE_RPC_URL! } },
+      transport: {
+        type: "http",
+        options: { url: process.env.BASE_RPC_URL ?? "https://mainnet.base.org" },
+      },
     },
   ],
   contracts: {
@@ -35,4 +38,4 @@ export const config: Config = {
       network: "base",
     },
   },
-};
+}

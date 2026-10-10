@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { SoverityButton } from "@soverity/sdk";
-import type { SignInResult } from "@soverity/sdk";
-import { GlassCard } from "@soverity/ui";
+import { SoverityButton } from "@soverity/sdk"
+import type { SignInResult } from "@soverity/sdk"
+import { GlassCard } from "@soverity/ui"
+import { useState } from "react"
 
 /**
  * Demo dApp — a generic Web3 app that knows NOTHING about Soverity's
@@ -14,18 +14,18 @@ import { GlassCard } from "@soverity/ui";
  * plus a server verify call behind /api/me.
  */
 export default function Home() {
-  const [result, setResult] = useState<SignInResult | null>(null);
-  const [serverCheck, setServerCheck] = useState<string | null>(null);
-  const session = result?.session;
+  const [result, setResult] = useState<SignInResult | null>(null)
+  const [serverCheck, setServerCheck] = useState<string | null>(null)
+  const session = result?.session
 
   async function verifyOnServer() {
-    if (!result) return;
+    if (!result) return
     const res = await fetch("/api/me", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(result),
-    }).then((r) => r.json());
-    setServerCheck(res.valid ? `Verified: ${res.did}` : `Rejected: ${res.reason}`);
+    }).then((r) => r.json())
+    setServerCheck(res.valid ? `Verified: ${res.did}` : `Rejected: ${res.reason}`)
   }
 
   return (
@@ -40,9 +40,8 @@ export default function Home() {
         A dApp with zero identity code
       </h1>
       <p className="mb-8" style={{ color: "var(--sv-text-secondary)" }}>
-        This app has no wallet-connect modal, no seed-phrase screen, no KYC
-        form. Its entire auth is the button below — one component, one
-        callback, one server function.
+        This app has no wallet-connect modal, no seed-phrase screen, no KYC form. Its entire auth is
+        the button below — one component, one callback, one server function.
       </p>
 
       <GlassCard className="mb-6 p-6" elevation="raised" glow="teal">
@@ -54,8 +53,8 @@ export default function Home() {
           onSuccess={setResult}
         />
         <p className="mt-4 text-xs" style={{ color: "var(--sv-text-muted)" }}>
-          Requests: openid, profile, proof:unique_human — you approve the rest
-          in the Soverity permission modal.
+          Requests: openid, profile, proof:unique_human — you approve the rest in the Soverity
+          permission modal.
         </p>
       </GlassCard>
 
@@ -101,9 +100,9 @@ export default function Home() {
       )}
 
       <p className="text-center text-sm" style={{ color: "var(--sv-text-muted)" }}>
-        Full source: <span className="font-mono">apps/demo-dapp</span> — the
-        integration is under 30 lines.
+        Full source: <span className="font-mono">apps/demo-dapp</span> — the integration is under 30
+        lines.
       </p>
     </div>
-  );
+  )
 }
