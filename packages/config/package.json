@@ -1,0 +1,12 @@
+{
+  "name": "@soverity/config",
+  "version": "0.1.0",
+  "private": true,
+  "files": ["tsconfig", "biome.json"],
+  "exports": {
+    "./tsconfig": "./tsconfig/base.json",
+    "./tsconfig/next": "./tsconfig/next.json",
+    "./tsconfig/react-library": "./tsconfig/react-library.json",
+    "./biome": "./biome.json"
+  }
+}

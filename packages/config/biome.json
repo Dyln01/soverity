@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/biome",
+  "extends": ["../../biome.json"],
+  "files": { "include": ["apps/**", "packages/**", "services/**"] },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": { "noExplicitAny": "off" },
+      "correctness": { "executionInNoVoidContext": "off" },
+      "style": { "useImportType": "warn", "useNodejsImportProtocol": "error" }
+    }
+  }
+}
