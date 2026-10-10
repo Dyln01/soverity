@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { GlassCard } from "./GlassCard";
-import { contrastPairs, surfaces } from "./tokens";
+import { describe, expect, it } from "vitest";
+import { GlassCard } from "../src/GlassCard";
+import { contrastPairs, surfaces } from "../src/tokens";
 
 describe("glass design system", () => {
   it("renders all three elevation levels with the right surface classes", () => {
@@ -10,7 +11,9 @@ describe("glass design system", () => {
           hi
         </GlassCard>,
       );
-      expect(markup).toContain(elevation === "base" ? "sv-glass\"" : `sv-glass-${elevation}`);
+      const expectedClass =
+        elevation === "base" ? "sv-glass " : `sv-glass-${elevation} `;
+      expect(markup).toContain(`class="sv-focus ${expectedClass}`);
     }
   });
 
