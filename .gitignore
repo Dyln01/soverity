@@ -24,3 +24,6 @@ out/
 .DS_Store
 coverage/
 .downloads/
+
+# foundry broadcast artifacts (local anvil runs)
+packages/contracts/broadcast/
