@@ -1,0 +1,4 @@
+{
+	"extends": "@soverity/config/tsconfig/react-library.json",
+	"include": ["src", "test"]
+}

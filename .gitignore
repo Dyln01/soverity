@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+build/
+out/
+.next/
+.turbo/
+cache/
+
+# foundry
+foundry-cache/
+out/
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
+*.log
+.DS_Store
+coverage/
+.downloads/
+
+# foundry broadcast artifacts (local anvil runs)
+packages/contracts/broadcast/
