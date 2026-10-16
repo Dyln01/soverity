@@ -9,7 +9,7 @@ but no central authority owns the identity, and **no KYC is ever requested**.
 
 One line to sign in. One line to add a passport. One line to verify.
 
-## **!NOT ONLINE YET!**
+## **!COMING SOON!**
 
 </div>
 
