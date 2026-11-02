@@ -16,7 +16,7 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
       - uses: actions/setup-node@v4
@@ -61,7 +61,7 @@ jobs:
     if: contains(github.event.head_commit.message, 'release')
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
       - uses: actions/setup-node@v4
